@@ -45,7 +45,7 @@ public class ConsolesController {
         if(!consoleService.consoleExistsById(consoleId)){
             return new ResponseEntity("There is no console with that Id: " + consoleId, HttpStatus.NOT_FOUND);
         }
-        consoleService.deleteConsole(consoleId);
-        return new ResponseEntity("Console Deleted successfully", HttpStatus.OK);
+        String message = consoleService.deleteConsole(consoleId);
+        return new ResponseEntity(message, HttpStatus.OK);
     }
 }

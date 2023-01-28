@@ -58,11 +58,13 @@ public class ConsoleService {
         }
         return new Console();
     }
-    public void deleteConsole(String consoleId){
+    public String deleteConsole(String consoleId){
         try{
             Console console = consoleRepository.findById(consoleId).get();
             if(!console.equals(Optional.empty())){
                 consoleRepository.deleteById(consoleId);
+
+                return "The console was deleted successfully";
             } else {
                 System.out.println("There is no such element with Id: " + consoleId + " In Console Repository");
             }
@@ -71,6 +73,7 @@ public class ConsoleService {
         } catch (IllegalArgumentException e ){
             System.out.println("The given argument was null while trying to delete, in Console Repository");
         }
+        return "";
     }
     public boolean consoleExistsById(String consoleId){
         try{
