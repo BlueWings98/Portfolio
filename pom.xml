@@ -33,9 +33,9 @@
 			<artifactId>aws-java-sdk-dynamodb</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.github.derjust</groupId>
+			<groupId>io.github.boostchicken</groupId>
 			<artifactId>spring-data-dynamodb</artifactId>
-			<version>5.1.0</version>
+			<version>5.2.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
