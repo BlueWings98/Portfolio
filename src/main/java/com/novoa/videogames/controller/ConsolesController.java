@@ -57,6 +57,5 @@ public class ConsolesController {
     public Map quoteConsole(@RequestBody QuoteDto quoteDto){
         JSONObject quote = this.consoleService.quoteConsole(quoteDto);
         return quote.toMap();
-        //return new ResponseEntity<>(quote, HttpStatus.OK);
     }
 }

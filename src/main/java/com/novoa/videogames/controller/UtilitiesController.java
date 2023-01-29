@@ -24,34 +24,34 @@ public class UtilitiesController {
     HttpDownloadService httpDownloadService;
     @Autowired
     ConsoleService consoleService;
+
     @PostMapping("/utilities/download")
-    public ResponseEntity<String> downloadFile(@RequestBody UtilitiesDto utilitiesDto){
+    public ResponseEntity<String> downloadFile(@RequestBody UtilitiesDto utilitiesDto) {
         String fileURL = utilitiesDto.getFileURL();
         File tmpDir = new File("src/main/resources/files/Descuentos.xlsx");
-        if(!tmpDir.exists()){
-            String message = this.httpDownloadService.downloadFile(fileURL,"src/main/resources/files");
-            return new ResponseEntity<>(message,HttpStatus.OK);
-        } else{
+        if (!tmpDir.exists()) {
+            String message = this.httpDownloadService.downloadFile(fileURL, "src/main/resources/files");
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        } else {
             return new ResponseEntity<>("The file already exists", HttpStatus.BAD_REQUEST);
         }
     }
-    //"src/main/resources/files/Descuentos.xlsx"
     @PostMapping("/utilities/read")
-    public ResponseEntity<Iterable<Console>> readExcelAndUpload(@RequestBody UtilitiesDto utilitiesDto){
+    public ResponseEntity<Iterable<Console>> readExcelAndUpload(@RequestBody UtilitiesDto utilitiesDto) {
         String inputFilePath = utilitiesDto.getInputFilePath();
         File tmpDir = new File(inputFilePath);
-        if(tmpDir.exists()){
+        if (tmpDir.exists()) {
             ArrayList<Console> consoleArrayList = new ArrayList<>();
             ArrayList<ConsoleDto> consoleDtoArrayList = this.excelReadService.ReadExcel(inputFilePath);
-            for (ConsoleDto consoleDto:consoleDtoArrayList) {
-                if(this.consoleService.consoleExistsById(consoleDto.getConsoleId())){
+            for (ConsoleDto consoleDto : consoleDtoArrayList) {
+                if (this.consoleService.consoleExistsById(consoleDto.getConsoleId())) {
                     consoleArrayList.add(this.consoleService.updateConsole(consoleDto));
                 } else {
                     consoleArrayList.add(this.consoleService.saveConsole(consoleDto));
                 }
             }
             return ResponseEntity.ok(consoleArrayList);
-        } else{
+        } else {
             return new ResponseEntity("The file already exists", HttpStatus.BAD_REQUEST);
         }
     }
