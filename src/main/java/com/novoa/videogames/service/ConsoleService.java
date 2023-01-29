@@ -1,8 +1,11 @@
 package com.novoa.videogames.service;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.novoa.videogames.dto.ConsoleDto;
+import com.novoa.videogames.dto.QuoteDto;
 import com.novoa.videogames.entity.Console;
 import com.novoa.videogames.repository.ConsoleRepository;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,16 @@ public class ConsoleService {
             System.out.println("The given argument was null while trying to fetch it, in Console Repository");
         } catch (NoSuchElementException e ){
             System.out.println("There was no element with the given Id: "+ consoleId +" while trying to fetch by Id Console");
+        }
+        return new Console();
+    }
+    public Console getConsoleByName(String consoleName){
+        try{
+            return consoleRepository.getByConsoleName(consoleName);
+        } catch (IllegalArgumentException e){
+            System.out.println("The given argument was null while trying to fetch it, in Console Repository");
+        } catch (NoSuchElementException e ){
+            System.out.println("There was no element with the given name: "+ consoleName +" while trying to fetch by Id Console");
         }
         return new Console();
     }
@@ -74,6 +87,23 @@ public class ConsoleService {
             System.out.println("The given argument was null while trying to delete, in Console Repository");
         }
         return "";
+    }
+    public JSONObject quoteConsole(QuoteDto quoteDto){
+        if(this.consoleExistsByName(quoteDto.getConsole())){
+            Console console = this.consoleRepository.getByConsoleName(quoteDto.getConsole());
+            JSONObject jsonObject = new JSONObject();
+            String cleanMinPrice = console.getMinPrice().split("\\.")[0];
+            String cleanDiscount = console.getDiscount().split("\\.")[0];
+            int value = Integer.parseInt(cleanMinPrice);
+            if(value<= quoteDto.getValue()){
+                value = Integer.parseInt(cleanMinPrice)*(100-Integer.parseInt(cleanDiscount))/100;
+            } else {
+                value = Integer.parseInt(cleanMinPrice);
+            }
+            jsonObject.put("ValueToChargeClient", value);
+            return jsonObject;
+        }
+        return new JSONObject();
     }
     public boolean consoleExistsById(String consoleId){
         try{

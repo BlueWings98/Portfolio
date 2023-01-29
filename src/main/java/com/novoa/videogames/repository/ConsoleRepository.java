@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConsoleRepository extends CrudRepository <Console, String> {
     boolean existsByConsoleName(String consoleName);
+    Console getByConsoleName(String consoleName);
 }
