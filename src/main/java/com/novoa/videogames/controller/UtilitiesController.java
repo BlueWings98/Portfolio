@@ -44,7 +44,11 @@ public class UtilitiesController {
             ArrayList<Console> consoleArrayList = new ArrayList<>();
             ArrayList<ConsoleDto> consoleDtoArrayList = this.excelReadService.ReadExcel(inputFilePath);
             for (ConsoleDto consoleDto:consoleDtoArrayList) {
-                consoleArrayList.add(this.consoleService.updateConsole(consoleDto));
+                if(this.consoleService.consoleExistsById(consoleDto.getConsoleId())){
+                    consoleArrayList.add(this.consoleService.updateConsole(consoleDto));
+                } else {
+                    consoleArrayList.add(this.consoleService.saveConsole(consoleDto));
+                }
             }
             return ResponseEntity.ok(consoleArrayList);
         } else{
