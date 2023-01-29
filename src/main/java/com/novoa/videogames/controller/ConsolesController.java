@@ -43,9 +43,9 @@ public class ConsolesController {
     @DeleteMapping("/consoles/{consoleId}")
     public ResponseEntity<?> deleteConsoleById(@PathVariable("consoleId") String consoleId){
         if(!consoleService.consoleExistsById(consoleId)){
-            return new ResponseEntity("There is no console with that Id: " + consoleId, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("There is no console with that Id: " + consoleId, HttpStatus.NOT_FOUND);
         }
         String message = consoleService.deleteConsole(consoleId);
-        return new ResponseEntity(message, HttpStatus.OK);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 }
