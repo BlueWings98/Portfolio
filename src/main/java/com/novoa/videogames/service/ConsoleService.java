@@ -3,6 +3,7 @@ package com.novoa.videogames.service;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.novoa.videogames.dto.ConsoleDto;
 import com.novoa.videogames.dto.QuoteDto;
+import com.novoa.videogames.dto.SaleDto;
 import com.novoa.videogames.entity.Console;
 import com.novoa.videogames.repository.ConsoleRepository;
 import org.json.JSONObject;
@@ -12,11 +13,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class ConsoleService {
     @Autowired
     ConsoleRepository consoleRepository;
+    @Autowired
+    SaleService saleService;
     public Iterable<Console> getConsoleIterable(){
         return consoleRepository.findAll();
     }
@@ -88,18 +92,26 @@ public class ConsoleService {
         }
         return "";
     }
-    public JSONObject quoteConsole(QuoteDto quoteDto){
+    public JSONObject sellConsole(QuoteDto quoteDto){
         if(this.consoleExistsByName(quoteDto.getConsole())){
             Console console = this.consoleRepository.getByConsoleName(quoteDto.getConsole());
             JSONObject jsonObject = new JSONObject();
+            SaleDto saleDto = new SaleDto();
             String cleanMinPrice = console.getMinPrice().split("\\.")[0];
             String cleanDiscount = console.getDiscount().split("\\.")[0];
+            saleDto.setProductName(console.getConsoleName());
             int value = Integer.parseInt(cleanMinPrice);
             if(value<= quoteDto.getValue()){
                 value = Integer.parseInt(cleanMinPrice)*(100-Integer.parseInt(cleanDiscount))/100;
+                saleDto.setPrice(String.valueOf(value));
+                saleDto.setDiscount(String.valueOf(Integer.parseInt(cleanMinPrice)-value));
             } else {
                 value = Integer.parseInt(cleanMinPrice);
+                saleDto.setPrice(String.valueOf(value));
             }
+            String randomSaleId = String.valueOf(ThreadLocalRandom.current().nextInt(0, 1000 + 1));
+            saleDto.setSaleId(randomSaleId);
+            this.saleService.saveSale(saleDto);
             jsonObject.put("ValueToChargeClient", value);
             return jsonObject;
         }

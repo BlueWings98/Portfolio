@@ -86,4 +86,13 @@ public class SaleService {
         }
         return false;
     }
+    public int getDiscountReport(){
+        int totalDiscount = 0;
+        for (Sale sale: this.getSaleIterable()) {
+            if (sale.getDiscount()!=null){
+                totalDiscount = totalDiscount + Integer.parseInt(sale.getDiscount());
+            }
+        }
+        return totalDiscount;
+    }
 }

@@ -53,9 +53,9 @@ public class ConsolesController {
         String message = consoleService.deleteConsole(consoleId);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
-    @PutMapping("/consoles/quote")
-    public Map quoteConsole(@RequestBody QuoteDto quoteDto){
-        JSONObject quote = this.consoleService.quoteConsole(quoteDto);
+    @PutMapping("/consoles/sale")
+    public Map sellConsole(@RequestBody QuoteDto quoteDto){
+        JSONObject quote = this.consoleService.sellConsole(quoteDto);
         return quote.toMap();
     }
 }

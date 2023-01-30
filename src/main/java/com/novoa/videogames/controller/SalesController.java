@@ -45,4 +45,9 @@ public class SalesController {
         saleService.deleteSale(saleId);
         return new ResponseEntity("Sale deleted successfully", HttpStatus.OK);
     }
+    @GetMapping("/sales/discount/report")
+    public ResponseEntity<?> getDiscountReport(){
+        int totalDiscounts = this.saleService.getDiscountReport();
+        return new ResponseEntity<>("The total given by discounts is: " + totalDiscounts , HttpStatus.OK);
+    }
 }
