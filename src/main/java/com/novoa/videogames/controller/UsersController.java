@@ -14,35 +14,22 @@ public class UsersController {
     UserService userService;
     @GetMapping("/users")
     public ResponseEntity<Iterable<User>> getAllUsers(){
-        return ResponseEntity.ok(userService.getUserIterable());
+        return ResponseEntity.ok(this.userService.getUserIterable());
     }
     @GetMapping("/users/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable("userId") String userId){
-        if(!userService.userExistsById(userId)){
-            return new ResponseEntity("There is no user with that Id: " + userId, HttpStatus.NOT_FOUND);
-        }
-        return ResponseEntity.ok(userService.getUserById(userId));
+        return this.userService.getUserById(userId);
     }
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@RequestBody UserDto userDto){
-        if(userService.userExistsById(userDto.getUserId())){
-            return new ResponseEntity("The user Id already exists", HttpStatus.BAD_REQUEST);
-        }
-        return ResponseEntity.ok(userService.saveUser(userDto));
+        return this.userService.saveUser(userDto);
     }
     @PutMapping("/users")
     public ResponseEntity<User> updateUser(@RequestBody UserDto userDto){
-        if(!userService.userExistsById(userDto.getUserId())){
-            return new ResponseEntity("The user with that Id does not exist", HttpStatus.BAD_REQUEST);
-        }
-        return ResponseEntity.ok(userService.updateUser(userDto));
+        return this.userService.updateUser(userDto);
     }
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<?> deleteUserById(@PathVariable("userId") String userId){
-        if(!userService.userExistsById(userId)){
-            return new ResponseEntity("There is no user with that Id: " + userId, HttpStatus.NOT_FOUND);
-        }
-        userService.deleteUser(userId);
-        return new ResponseEntity("User deleted successfully", HttpStatus.OK);
+        return this.userService.deleteUserById(userId);
     }
 }

@@ -43,58 +43,54 @@ class ConsolesControllerTest {
     }
     @Test
     void getConsoleByIdSuccess() {
-        when(consoleService.getConsoleById(anyString())).thenReturn(getDummyConsole());
+        when(consoleService.getConsoleById(anyString())).thenReturn(new ResponseEntity<Console>(HttpStatus.OK));
         when(consoleService.consoleExistsById(anyString())).thenReturn(true);
         ResponseEntity<Console> response = consolesController.getConsoleById("1");
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
     @Test
     void getConsoleByIdFail() {
-        when(consoleService.getConsoleById(anyString())).thenReturn(getDummyConsole());
+        when(consoleService.getConsoleById(anyString())).thenReturn(new ResponseEntity<Console>(HttpStatus.NOT_FOUND));
         ResponseEntity<Console> response = consolesController.getConsoleById("1");
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
     @Test
     void createConsoleSuccess() {
-        when(consoleService.consoleExistsById(anyString())).thenReturn(false);
-        when(consoleService.consoleExistsByName(anyString())).thenReturn(false);
-        when(consoleService.saveConsole(any(ConsoleDto.class))).thenReturn(this.getDummyConsole());
+        when(consoleService.createConsole(any(ConsoleDto.class))).thenReturn(new ResponseEntity<Console>(HttpStatus.OK));
         ResponseEntity<Console> response = consolesController.createConsole(this.getDummyConsoleDto());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
     @Test
     void createConsoleFail() {
-        when(consoleService.consoleExistsById(anyString())).thenReturn(false);
-        when(consoleService.consoleExistsByName(anyString())).thenReturn(true);
-        when(consoleService.saveConsole(any(ConsoleDto.class))).thenReturn(this.getDummyConsole());
+        when(consoleService.createConsole(any(ConsoleDto.class))).thenReturn(new ResponseEntity<Console>(HttpStatus.BAD_REQUEST));
         ResponseEntity<Console> response = consolesController.createConsole(this.getDummyConsoleDto());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
     @Test
     void updateConsoleSuccess() {
         when(consoleService.consoleExistsById(anyString())).thenReturn(true);
-        when(consoleService.updateConsole(any(ConsoleDto.class))).thenReturn(this.getDummyConsole());
+        when(consoleService.updateConsole(any(ConsoleDto.class))).thenReturn(new ResponseEntity<Console>(HttpStatus.OK));
         ResponseEntity<Console> response = consolesController.updateConsole(this.getDummyConsoleDto());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
     @Test
     void updateConsoleFail() {
         when(consoleService.consoleExistsById(anyString())).thenReturn(false);
-        when(consoleService.updateConsole(any(ConsoleDto.class))).thenReturn(this.getDummyConsole());
+        when(consoleService.updateConsole(any(ConsoleDto.class))).thenReturn(new ResponseEntity<Console>(HttpStatus.BAD_REQUEST));
         ResponseEntity<Console> response = consolesController.updateConsole(this.getDummyConsoleDto());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
     @Test
     void deleteConsoleByIdSuccess() {
         when(consoleService.consoleExistsById(anyString())).thenReturn(true);
-        when(consoleService.deleteConsole(anyString())).thenReturn("The console was deleted successfully");
+        when(consoleService.deleteConsole(anyString())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
         ResponseEntity<?> response = consolesController.deleteConsoleById("1");
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
     @Test
     void deleteConsoleByIdFail() {
         when(consoleService.consoleExistsById(anyString())).thenReturn(false);
-        when(consoleService.deleteConsole(anyString())).thenReturn("The console was deleted successfully");
+        when(consoleService.deleteConsole(anyString())).thenReturn(new ResponseEntity<String>(HttpStatus.NOT_FOUND));
         ResponseEntity<?> response = consolesController.deleteConsoleById("1");
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }

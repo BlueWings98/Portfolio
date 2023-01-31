@@ -2,10 +2,16 @@ package com.novoa.videogames.service;
 
 import com.novoa.videogames.dto.ConsoleDto;
 
+import com.novoa.videogames.dto.UtilitiesDto;
+import com.novoa.videogames.entity.Console;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,6 +19,8 @@ import java.util.*;
 
 @Service
 public class ExcelReadService {
+    @Autowired
+    ConsoleService consoleService;
     public ArrayList<ConsoleDto> ReadExcel(String filePath) {
         Map<Integer, List<String>> data = new HashMap<>();
         try {
@@ -87,5 +95,23 @@ public class ExcelReadService {
         }
         consolesDtoToLoad.remove(0);
         return consolesDtoToLoad;
+    }
+    public ResponseEntity<Iterable<Console>> readExcelAndUpload(UtilitiesDto utilitiesDto){
+        String inputFilePath = utilitiesDto.getInputFilePath();
+        File tmpDir = new File(inputFilePath);
+        if (tmpDir.exists()) {
+            ArrayList<Console> consoleArrayList = new ArrayList<>();
+            ArrayList<ConsoleDto> consoleDtoArrayList = this.ReadExcel(inputFilePath);
+            for (ConsoleDto consoleDto : consoleDtoArrayList) {
+                if (this.consoleService.consoleExistsById(consoleDto.getConsoleId())) {
+                    consoleArrayList.add(this.consoleService.updateConsole(consoleDto).getBody());
+                } else {
+                    consoleArrayList.add(this.consoleService.saveConsole(consoleDto));
+                }
+            }
+            return ResponseEntity.ok(consoleArrayList);
+        } else {
+            return new ResponseEntity("The file already exists", HttpStatus.BAD_REQUEST);
+        }
     }
 }

@@ -23,35 +23,19 @@ public class ConsolesController {
     }
     @GetMapping("/consoles/{consoleId}")
     public ResponseEntity<Console> getConsoleById(@PathVariable("consoleId") String consoleId){
-        if(!consoleService.consoleExistsById(consoleId)){
-            return new ResponseEntity("There is no console with that Id: " + consoleId, HttpStatus.NOT_FOUND);
-        }
-        return ResponseEntity.ok(consoleService.getConsoleById(consoleId));
+        return consoleService.getConsoleById(consoleId);
     }
     @PostMapping("/consoles")
     public ResponseEntity<Console> createConsole(@RequestBody ConsoleDto consoleDto){
-        if(consoleService.consoleExistsById(consoleDto.getConsoleId())){
-            return new ResponseEntity("The console Id already exists", HttpStatus.BAD_REQUEST);
-        }
-        if (consoleService.consoleExistsByName(consoleDto.getConsoleName())){
-           return new ResponseEntity("That console name already exists", HttpStatus.BAD_REQUEST);
-        }
-        return ResponseEntity.ok(consoleService.saveConsole(consoleDto));
+        return consoleService.createConsole(consoleDto);
     }
     @PutMapping("/consoles")
     public ResponseEntity<Console> updateConsole(@RequestBody ConsoleDto consoleDto){
-        if(!consoleService.consoleExistsById(consoleDto.getConsoleId())){
-            return new ResponseEntity("The console with that Id does not exist", HttpStatus.BAD_REQUEST);
-        }
-        return ResponseEntity.ok(consoleService.updateConsole(consoleDto));
+        return consoleService.updateConsole(consoleDto);
     }
     @DeleteMapping("/consoles/{consoleId}")
     public ResponseEntity<?> deleteConsoleById(@PathVariable("consoleId") String consoleId){
-        if(!consoleService.consoleExistsById(consoleId)){
-            return new ResponseEntity<>("There is no console with that Id: " + consoleId, HttpStatus.NOT_FOUND);
-        }
-        String message = consoleService.deleteConsole(consoleId);
-        return new ResponseEntity<>(message, HttpStatus.OK);
+        return consoleService.deleteConsole(consoleId);
     }
     @PutMapping("/consoles/sale")
     public Map sellConsole(@RequestBody QuoteDto quoteDto){

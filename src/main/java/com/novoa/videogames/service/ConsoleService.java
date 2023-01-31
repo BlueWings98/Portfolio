@@ -1,14 +1,16 @@
 package com.novoa.videogames.service;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.novoa.videogames.dto.ConsoleDto;
 import com.novoa.videogames.dto.QuoteDto;
 import com.novoa.videogames.dto.SaleDto;
 import com.novoa.videogames.entity.Console;
 import com.novoa.videogames.repository.ConsoleRepository;
+import org.json.HTTP;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
@@ -22,27 +24,43 @@ public class ConsoleService {
     @Autowired
     SaleService saleService;
     public Iterable<Console> getConsoleIterable(){
+
         return consoleRepository.findAll();
     }
-    public Console getConsoleById(String consoleId){
+    public ResponseEntity<Console> getConsoleById(String consoleId){
         try{
-            return consoleRepository.findById(consoleId).get();
+            if(!this.consoleExistsById(consoleId)){
+                return new ResponseEntity("There is no console with that Id: " + consoleId, HttpStatus.NOT_FOUND);
+            }
+            Console console = consoleRepository.findById(consoleId).get();
+            return ResponseEntity.ok(console);
         } catch (IllegalArgumentException e){
             System.out.println("The given argument was null while trying to fetch it, in Console Repository");
         } catch (NoSuchElementException e ){
             System.out.println("There was no element with the given Id: "+ consoleId +" while trying to fetch by Id Console");
         }
-        return new Console();
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     public Console getConsoleByName(String consoleName){
         try{
+
             return consoleRepository.getByConsoleName(consoleName);
         } catch (IllegalArgumentException e){
             System.out.println("The given argument was null while trying to fetch it, in Console Repository");
         } catch (NoSuchElementException e ){
             System.out.println("There was no element with the given name: "+ consoleName +" while trying to fetch by Id Console");
         }
+
         return new Console();
+    }
+    public ResponseEntity<Console> createConsole(ConsoleDto consoleDto){
+        if(consoleExistsById(consoleDto.getConsoleId())){
+            return new ResponseEntity("The console Id already exists", HttpStatus.BAD_REQUEST);
+        }
+        if (consoleExistsByName(consoleDto.getConsoleName())){
+            return new ResponseEntity("That console name already exists", HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(saveConsole(consoleDto));
     }
     public Console saveConsole(ConsoleDto consoleDto){
         Console console = new Console(
@@ -53,35 +71,45 @@ public class ConsoleService {
                 consoleDto.getDiscount()
         );
         try {
+
             return consoleRepository.save(console);
         } catch (IllegalArgumentException | OptimisticLockingFailureException e){
             System.out.println("The given argument was null while trying to save, in Console Repository");
         }
+
         return new Console();
     }
-    public Console updateConsole(ConsoleDto consoleDto){
+    public ResponseEntity<Console> updateConsole(ConsoleDto consoleDto){
         try {
+            if(consoleExistsById(consoleDto.getConsoleId())){
+                return new ResponseEntity("The console with that Id does not exist", HttpStatus.BAD_REQUEST);
+            }
             Console console = consoleRepository.findById(consoleDto.getConsoleId()).get();
             console.setConsoleId(consoleDto.getConsoleId());
             console.setConsoleName(consoleDto.getConsoleName());
             console.setMinPrice(consoleDto.getMinPrice());
             console.setMaxPrice(consoleDto.getMaxPrice());
             console.setDiscount(consoleDto.getDiscount());
-            return consoleRepository.save(console);
+
+            return ResponseEntity.ok(consoleRepository.save(console));
         } catch (IllegalArgumentException | OptimisticLockingFailureException e){
             System.out.println("The given argument was null while trying to save, in Console Repository");
         } catch (NoSuchElementException e ){
             System.out.println("There was no element with the given Id, while trying to update Console");
         }
-        return new Console();
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-    public String deleteConsole(String consoleId){
+    public ResponseEntity<String> deleteConsole(String consoleId){
+        if(!consoleExistsById(consoleId)){
+            return new ResponseEntity<>("There is no console with that Id: " + consoleId, HttpStatus.NOT_FOUND);
+        }
         try{
             Console console = consoleRepository.findById(consoleId).get();
             if(!console.equals(Optional.empty())){
                 consoleRepository.deleteById(consoleId);
 
-                return "The console was deleted successfully";
+                return new ResponseEntity<>("The console was deleted successfully", HttpStatus.OK);
             } else {
                 System.out.println("There is no such element with Id: " + consoleId + " In Console Repository");
             }
@@ -90,7 +118,8 @@ public class ConsoleService {
         } catch (IllegalArgumentException e ){
             System.out.println("The given argument was null while trying to delete, in Console Repository");
         }
-        return "";
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     public JSONObject sellConsole(QuoteDto quoteDto){
         if(this.consoleExistsByName(quoteDto.getConsole())){
@@ -113,16 +142,20 @@ public class ConsoleService {
             saleDto.setSaleId(randomSaleId);
             this.saleService.saveSale(saleDto);
             jsonObject.put("ValueToChargeClient", value);
+
             return jsonObject;
         }
+
         return new JSONObject();
     }
     public boolean consoleExistsById(String consoleId){
         try{
+
             return consoleRepository.existsById(consoleId);
         } catch (IllegalArgumentException e){
             System.out.println("The given argument was null while trying to check if that console existed by id.");
         }
+
         return false;
     }
     public boolean consoleExistsByName(String consoleName){
@@ -131,6 +164,7 @@ public class ConsoleService {
         } catch (IllegalArgumentException e){
         System.out.println("The given argument was null while trying to check if that console existed by name.");
     }
+
         return false;
     }
 }
