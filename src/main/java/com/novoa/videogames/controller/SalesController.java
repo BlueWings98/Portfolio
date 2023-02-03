@@ -18,36 +18,22 @@ public class SalesController {
     }
     @GetMapping("/sales/{saleId}")
     public ResponseEntity<Sale> getSaleById(@PathVariable("saleId") String saleId){
-        if(!saleService.saleExistsById(saleId)){
-            return new ResponseEntity("There is no sale with that Id: " + saleId, HttpStatus.NOT_FOUND);
-        }
-        return ResponseEntity.ok(saleService.getSaleById(saleId));
+        return this.saleService.getSaleById(saleId);
     }
     @PostMapping("/sales")
     public ResponseEntity<Sale> createSale(@RequestBody SaleDto saleDto){
-        if(saleService.saleExistsById(saleDto.getSaleId())){
-            return new ResponseEntity("The sale Id already exists", HttpStatus.BAD_REQUEST);
-        }
-        return ResponseEntity.ok(saleService.saveSale(saleDto));
+        return this.saleService.saveSale(saleDto);
     }
     @PutMapping("/sales")
     public ResponseEntity<Sale> updateSale(@RequestBody SaleDto saleDto){
-        if(!saleService.saleExistsById(saleDto.getSaleId())){
-            return new ResponseEntity("The sale with that Id does not exist", HttpStatus.BAD_REQUEST);
-        }
-        return ResponseEntity.ok(saleService.updateSale(saleDto));
+        return this.saleService.updateSale(saleDto);
     }
     @DeleteMapping("/sales/{saleId}")
-    public ResponseEntity<?> deleteSaleById(@PathVariable("saleId") String saleId){
-        if(!saleService.saleExistsById(saleId)){
-            return new ResponseEntity("There is no sale with that Id: " + saleId, HttpStatus.NOT_FOUND);
-        }
-        saleService.deleteSale(saleId);
-        return new ResponseEntity("Sale deleted successfully", HttpStatus.OK);
+    public ResponseEntity<String> deleteSaleById(@PathVariable("saleId") String saleId){
+        return this.saleService.deleteSale(saleId);
     }
     @GetMapping("/sales/discount/report")
-    public ResponseEntity<?> getDiscountReport(){
-        int totalDiscounts = this.saleService.getDiscountReport();
-        return new ResponseEntity<>("The total given by discounts is: " + totalDiscounts , HttpStatus.OK);
+    public ResponseEntity<String> getDiscountReport(){
+        return this.saleService.getDiscountReport();
     }
 }

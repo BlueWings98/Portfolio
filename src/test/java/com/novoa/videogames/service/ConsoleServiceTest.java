@@ -1,5 +1,6 @@
 package com.novoa.videogames.service;
 
+import com.amazonaws.Response;
 import com.novoa.videogames.dto.ConsoleDto;
 import com.novoa.videogames.entity.Console;
 import com.novoa.videogames.repository.ConsoleRepository;
@@ -10,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -44,8 +47,9 @@ class ConsoleServiceTest {
     @Test
     void getConsoleByIdSuccess() {
         when(this.consoleRepository.findById(anyString())).thenReturn(Optional.of(this.getDummyConsole()));
-        Console returnedValue = this.consoleService.getConsoleById("1");
-        assertEquals(getDummyConsole(),returnedValue);
+        when(this.consoleRepository.existsById(anyString())).thenReturn(true);
+        ResponseEntity<Console> returnedValue = this.consoleService.getConsoleById("1");
+        assertEquals(HttpStatus.OK,returnedValue.getStatusCode());
     }
     @Test
     void getConsoleByIdFail() {
@@ -67,8 +71,8 @@ class ConsoleServiceTest {
     void updateConsoleSuccess() {
         when(this.consoleRepository.save(any(Console.class))).thenReturn(this.getDummyConsole());
         when(this.consoleRepository.findById(anyString())).thenReturn(Optional.of(this.getDummyConsole()));
-        Console returnedValue = this.consoleService.updateConsole(this.getDummyConsoleDto());
-        assertEquals(getDummyConsole(),returnedValue);
+        ResponseEntity<Console> returnedValue = this.consoleService.updateConsole(this.getDummyConsoleDto());
+        assertEquals(HttpStatus.OK,returnedValue.getStatusCode());
     }
     @Test
     void updateConsoleFail() {
