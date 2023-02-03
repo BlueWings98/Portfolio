@@ -1,13 +1,11 @@
 package com.novoa.videogames.controller;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.novoa.videogames.dto.ConsoleDto;
 import com.novoa.videogames.dto.QuoteDto;
 import com.novoa.videogames.entity.Console;
 import com.novoa.videogames.service.ConsoleService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
