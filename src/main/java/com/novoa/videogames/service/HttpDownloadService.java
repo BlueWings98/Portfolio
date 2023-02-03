@@ -19,8 +19,6 @@ import java.net.URL;
  */
 @Service
 public class HttpDownloadService {
-    @Autowired
-    HttpDownloadService httpDownloadService;
     private final int BUFFER_SIZE = 4096;
     private String downloadFile(String fileURL, String saveDir) {
         try {
@@ -66,7 +64,7 @@ public class HttpDownloadService {
         String fileURL = utilitiesDto.getFileURL();
         File tmpDir = new File("src/main/resources/files/Descuentos.xlsx");
         if (!tmpDir.exists()) {
-            String message = this.httpDownloadService.downloadFile(fileURL, "src/main/resources/files");
+            String message = downloadFile(fileURL, "src/main/resources/files");
             return new ResponseEntity<>(message, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("The file already exists", HttpStatus.BAD_REQUEST);

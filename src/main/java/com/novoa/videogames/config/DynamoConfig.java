@@ -18,10 +18,6 @@ public class DynamoConfig {
     private String endpoint;
     @Value("${amazon.aws.region}")
     private String region;
-    @Value("${amazon.aws.accesskey}")
-    private String accessKey;
-    @Value("${amazon.aws.secretkey}")
-    private String secretKey;
     @Bean
     public AmazonDynamoDB amazonDynamoDB(){
         AmazonDynamoDB amazonDynamoDB = AmazonDynamoDBClientBuilder.standard()
@@ -31,6 +27,8 @@ public class DynamoConfig {
     }
     @Bean
     public AWSCredentialsProvider awsCredentialsProvider(){
-        return new AWSStaticCredentialsProvider(new BasicAWSCredentials(this.accessKey,this.secretKey));
+        String accessKey = System.getenv("amazon_aws_accesskey");
+        String secretKey = System.getenv("amazon_aws_secretkey");
+        return new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey,secretKey));
     }
 }

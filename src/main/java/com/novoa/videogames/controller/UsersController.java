@@ -4,7 +4,6 @@ import com.novoa.videogames.dto.UserDto;
 import com.novoa.videogames.entity.User;
 import com.novoa.videogames.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
