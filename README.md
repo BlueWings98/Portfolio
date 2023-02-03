@@ -21,6 +21,10 @@ Clone the project
   git clone https://github.com/BlueWings98/videogames
 ```
 
+Create two environment variables in your system:
+amazon_aws_accesskey and set your Amazon Web Services Access Key
+amazon_aws_secretkey and set your Amazon Web Services Secret Key
+
 Go to the project directory
 
 ```bash
@@ -63,7 +67,7 @@ Generate the .jar file
 
 Build the image
 ```bash
-  docker build -t "spring-boot-docker"
+  docker build -t "spring-boot-docker"  --build-arg amazon_aws_accesskey_arg=<Your Access Key> --build-arg amazon_aws_secretkey_arg=<Your Private Key> .
 ```
 Run the proyect
 
